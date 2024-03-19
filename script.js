@@ -34,9 +34,31 @@ function createGrid(size) {
     buttonSelector[1].addEventListener("click", () => {
       gridItem.style.backgroundColor = "white";
     });
+
+    buttonSelector[2].addEventListener("click", () => {
+      // TODO
+    });
+
+    buttonSelector[3].addEventListener("click", () => {
+      const randomColor = `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
+      gridItem.addEventListener("mouseover", (e) => {
+        e.target.style.backgroundColor = randomColor;
+      });
+    });
+
+    buttonSelector[4].addEventListener("click", () => {
+      gridItem.addEventListener("mouseover", (e) => {
+        e.target.style.backgroundColor = "white";
+      });
+    });
+
+    buttonSelector[5].addEventListener("click", () => {});
   }
 }
 
+function random(number) {
+  return Math.floor(Math.random() * (number + 1));
+}
 function removeGrid() {
   while (drawArea.firstChild) {
     drawArea.removeChild(drawArea.firstChild);
