@@ -6,13 +6,11 @@ const drawArea = document.getElementById("draw-area");
 const buttonContainer = document.getElementById("button-container");
 const slider = document.getElementById("slider");
 const sliderValue = document.getElementById("slider-value");
+const buttonSelector = document.querySelectorAll(".grid-button");
 drawArea.style.width = `${gridAreaSize}px`;
 drawArea.style.height = `${gridAreaSize}px`;
-buttonContainer.style.width = `${gridAreaSize * 0.8}px`;
+buttonContainer.style.width = `${gridAreaSize}px`;
 sliderValue.innerText = `${slider.value} x ${slider.value} Pixels`;
-// function changeColor() {
-//   this.style.backgroundColor = `${color}`;
-// }
 
 function createGrid(size) {
   for (i = 0; i < size * size; i++) {
@@ -25,6 +23,17 @@ function createGrid(size) {
     gridItem.addEventListener("mouseover", (e) => {
       e.target.style.backgroundColor = `${color}`;
     });
+
+    buttonSelector[0].addEventListener("click", () => {
+      const currentStyle = gridItem.style.border;
+      const newStyle =
+        currentStyle === "hidden" ? "1px solid whitesmoke" : "hidden";
+      gridItem.style.border = newStyle;
+    });
+
+    buttonSelector[1].addEventListener("click", () => {
+      gridItem.style.backgroundColor = "white";
+    });
   }
 }
 
@@ -36,9 +45,9 @@ function removeGrid() {
 
 slider.oninput = (e) => {
   sliderValue.innerText = `${e.target.value} x ${e.target.value} Pixels`;
-  size = e.target.value;
   removeGrid();
-  createGrid(size);
+  createGrid(e.target.value);
 };
 
+console.log(buttonSelector);
 createGrid(size);

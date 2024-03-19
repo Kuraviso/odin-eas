@@ -10,8 +10,7 @@ body {
   background-color: aliceblue;
 }
 
-#draw-area,
-#button-container {
+#draw-area {
   display: flex;
   flex-wrap: wrap;
   margin: 0 auto;
@@ -21,14 +20,32 @@ body {
 }
 
 #button-container {
+  display: flex;
+  min-width: 600px;
   height: 30px;
-  margin-top: 100px;
-  margin-bottom: 10px;
+  margin: 100px auto 10px auto;
   justify-content: space-evenly;
+  flex: 0;
+  background-color: transparent;
 }
 
 .grid-button {
-  width: 75px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border: 1px solid;
+  border-radius: 3px;
+  min-width: 80px;
+}
+
+.grid-button:hover {
+  border-color: green;
+}
+
+.grid-button:hover .material-symbols-outlined {
+  color: green;
 }
 
 .item {
@@ -42,6 +59,7 @@ body {
 #slider-container {
   margin: 20px auto;
   text-align: center;
+  max-width: 600px;
 }
 
 .slider {
