@@ -1,8 +1,9 @@
 let size = 16;
 let isDrawing = false;
+let isRandom = false;
 let showGrid = true;
 let gridItems = [];
-const color = "black";
+let color = "black";
 const gridAreaSize = 600;
 const drawItems = document.getElementById("item");
 const drawArea = document.getElementById("draw-area");
@@ -17,14 +18,30 @@ sliderValue.innerText = `${slider.value} x ${slider.value} Pixels`;
 buttonSelector[0].style.color = "green";
 
 function setBackgroundColor(e) {
-  if (e.type === "mousedown") {
-    isDrawing = true;
-    e.target.style.backgroundColor = `${color}`;
-  } else if (e.type === "mouseover" && isDrawing) {
-    e.target.style.backgroundColor = `${color}`;
-  } else {
-    isDrawing = false;
+  let newColor;
+  switch (true) {
+    case e.type === "mousedown":
+      isDrawing = true;
+      newColor = isRandom ? generateRandomColor() : color;
+      break;
+    case e.type === "mouseover" && isDrawing:
+      newColor = isRandom ? generateRandomColor() : color;
+      break;
+    default:
+      isDrawing = false;
+      return;
   }
+
+  e.target.style.backgroundColor = newColor;
+}
+
+function toggleRandomColor() {
+  isRandom = !isRandom;
+  buttonSelector[3].style.color = isRandom ? "green" : "black";
+}
+
+function generateRandomColor() {
+  return `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
 }
 
 function toggleGrid() {
@@ -32,6 +49,13 @@ function toggleGrid() {
   buttonSelector[0].style.color = showGrid ? "green" : "black";
   gridItems.forEach((gridItem) => {
     gridItem.style.border = showGrid ? "1px solid whitesmoke" : "hidden";
+  });
+}
+
+function clearGrid() {
+  console.log("clear click");
+  gridItems.forEach((gridItem) => {
+    gridItem.style.backgroundColor = "white";
   });
 }
 
@@ -50,21 +74,13 @@ function createGrid(size) {
     gridItem.addEventListener("mouseup", (e) => setBackgroundColor(e));
   }
   buttonSelector[0].addEventListener("click", toggleGrid);
-
-  // buttonSelector[0].addEventListener("click", () => {
-  //   const currentStyle = gridItem.style.border;
-  //   const newStyle =
-  //     currentStyle === "hidden" ? "1px solid whitesmoke" : "hidden";
-  //   gridItem.style.border = newStyle;
-  // });
-
-  // buttonSelector[1].addEventListener("click", () => {
-  //   gridItem.style.backgroundColor = "white";
-  // });
+  buttonSelector[1].addEventListener("click", clearGrid);
 
   // buttonSelector[2].addEventListener("click", () => {
   //   // TODO
   // });
+
+  buttonSelector[3].addEventListener("click", toggleRandomColor);
 
   // buttonSelector[3].addEventListener("click", () => {
   //   const randomColor = `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
@@ -85,17 +101,23 @@ function createGrid(size) {
 function random(number) {
   return Math.floor(Math.random() * (number + 1));
 }
-function removeGrid() {
+function resetGrid() {
   while (drawArea.firstChild) {
     drawArea.removeChild(drawArea.firstChild);
   }
   gridItems.length = 0;
+  isRandom = false;
+  buttonSelector[0].style.color = "green";
+  buttonSelector[3].style.color = "black";
   buttonSelector[0].removeEventListener("click", toggleGrid);
+  buttonSelector[1].removeEventListener("click", clearGrid);
+
+  buttonSelector[3].removeEventListener("click", toggleRandomColor);
 }
 
 slider.oninput = (e) => {
   sliderValue.innerText = `${e.target.value} x ${e.target.value} Pixels`;
-  removeGrid();
+  resetGrid();
   createGrid(e.target.value);
 };
 
