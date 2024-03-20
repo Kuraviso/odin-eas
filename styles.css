@@ -38,6 +38,7 @@ body {
   border: 1px solid;
   border-radius: 3px;
   min-width: 80px;
+  cursor: pointer;
 }
 
 .grid-button:hover {
