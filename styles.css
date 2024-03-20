@@ -41,11 +41,15 @@ body {
   cursor: pointer;
 }
 
-.grid-button:hover {
+.grid-button:not([disabled]):hover {
   border-color: green;
 }
 
-.grid-button:hover .material-symbols-outlined {
+.grid-button:not([disabled]):active {
+  color: green;
+}
+
+.grid-button:not([disabled]):hover .material-symbols-outlined {
   color: green;
 }
 
