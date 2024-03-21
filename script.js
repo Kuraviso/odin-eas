@@ -1,6 +1,7 @@
 // basic Variables
 
 let size = 16;
+let isShadingOn = false;
 let isDrawing = false;
 let isRandom = false;
 let isEraserOn = false;
@@ -43,13 +44,24 @@ function setBackgroundColor(e) {
       isDrawing = false;
       return;
   }
+  if (!e.target.style.backgroundColor || isEraserOn) {
+    e.target.style.backgroundColor = newColor;
+  }
 
-  e.target.style.backgroundColor = newColor;
+  if (isShadingOn) {
+    e.target.style.opacity = parseFloat(e.target.style.opacity || 0) + 0.1;
+  } else {
+    e.target.style.backgroundColor = newColor;
+    e.target.style.opacity = "";
+  }
 }
 
 // toggle to activate the random colors
 
 function toggleRandomColor() {
+  if (isEraserOn) {
+    toggleEraser();
+  }
   isRandom = !isRandom;
   buttonSelector[3].style.color = isRandom ? "green" : "";
 }
@@ -57,7 +69,18 @@ function toggleRandomColor() {
 //function to generate a random rgb color
 
 function generateRandomColor() {
-  return `rgb(${random(255)}, ${random(255)}, ${random(255)})`;
+  return `rgba(${random(255)}, ${random(255)}, ${random(255)})`;
+}
+
+// function to generate shadows by affecting the .opacity attribute
+
+function toggleShading() {
+  if (isEraserOn) {
+    toggleEraser();
+  }
+
+  isShadingOn = !isShadingOn;
+  buttonSelector[2].style.color = isShadingOn ? "green" : "";
 }
 
 //toggle the grid lines on/off
@@ -74,7 +97,8 @@ function toggleGrid() {
 
 function clearGrid() {
   gridItems.forEach((gridItem) => {
-    gridItem.style.backgroundColor = "white";
+    gridItem.style.backgroundColor = "";
+    gridItem.style.opacity = "";
   });
 }
 
@@ -85,23 +109,19 @@ function toggleEraser() {
   if (isEraserOn) {
     color = previousColor;
     isEraserOn = false;
-    buttonSelector[4].style.color = "black";
+    buttonSelector[4].style.color = "";
     colorPicker.hidden = false;
-    buttonSelector[5].disabled = false;
-    buttonSelector[3].disabled = false;
-    buttonSelector[2].disabled = false;
   } else {
     if (isRandom) {
       toggleRandomColor();
     }
+    if (isShadingOn) {
+      toggleShading();
+    }
     previousColor = color;
-    color = "white";
+    color = "";
     isEraserOn = true;
-    colorPicker.hidden = true;
     buttonSelector[4].style.color = "green";
-    buttonSelector[5].disabled = true;
-    buttonSelector[3].disabled = true;
-    buttonSelector[2].disabled = true;
   }
 }
 
@@ -121,17 +141,16 @@ function createGrid(size) {
     gridItem.addEventListener("mouseover", (e) => setBackgroundColor(e));
     gridItem.addEventListener("mouseup", (e) => setBackgroundColor(e));
   }
-  buttonSelector[0].addEventListener("click", toggleGrid);
-  buttonSelector[1].addEventListener("click", clearGrid);
-
-  // buttonSelector[2].addEventListener("click", () => {
-  //   // TODO
-  // });
-
-  buttonSelector[3].addEventListener("click", toggleRandomColor);
-
-  buttonSelector[4].addEventListener("click", toggleEraser);
 }
+
+buttonSelector[0].addEventListener("click", toggleGrid);
+buttonSelector[1].addEventListener("click", clearGrid);
+
+buttonSelector[2].addEventListener("click", toggleShading);
+
+buttonSelector[3].addEventListener("click", toggleRandomColor);
+
+buttonSelector[4].addEventListener("click", toggleEraser);
 
 //generates a random number between 0 and 255 for the randomColor function
 
@@ -158,11 +177,6 @@ function resetGrid() {
 function applyDefaultValues() {
   buttonSelector[0].style.color = "green";
   buttonSelector[3].style.color = "";
-  buttonSelector[0].removeEventListener("click", toggleGrid);
-  buttonSelector[1].removeEventListener("click", clearGrid);
-
-  buttonSelector[3].removeEventListener("click", toggleRandomColor);
-  buttonSelector[4].removeEventListener("click", toggleEraser);
 }
 
 // takes the input from the slider to re-generate the grid with
@@ -177,6 +191,12 @@ slider.oninput = (e) => {
 // lets the user pick a color in hex value to paint on the grid
 
 colorPicker.oninput = (e) => {
+  if (isEraserOn) {
+    toggleEraser();
+  }
+  if (isRandom) {
+    toggleRandomColor();
+  }
   color = e.target.value;
 };
 
